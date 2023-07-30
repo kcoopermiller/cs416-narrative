@@ -15,39 +15,32 @@ export default function s3() {
 
     // Load the data
     d3.json("data/anime_filtered.csv.json").then(function(animeData) {
-        // Pre-process the data: convert 'score', 'members', and 'episodes' to numbers,
-        // and extract the year from the 'aired' field
+        // Pre-process the data: split the genre field into an array of genres, 
+        // and create a new row for each genre that the show belongs to.
+        var processedData = [];
         animeData.forEach(function(d) {
-            d.score = +d.score;
-            d.members = +d.members;
-            d.episodes = +d.episodes;
-            d.aired_from_year = new Date(d.aired.from).getFullYear();
+            var genres = d.genre.split(", ");
+            genres.forEach(function(genre) {
+                processedData.push({
+                    genre: genre,
+                    score: +d.score,
+                    members: +d.members
+                });
+            });
         });
 
-        // Create a color scale for the years
-        var color = d3.scaleSequential()
-            .domain(d3.extent(animeData, function(d) { return d.aired_from_year; }))
-            .interpolator(d3.interpolateBlues);
+        // Group the data by genre, and calculate the total members and average score for each genre
+        var dataByGenre = d3.rollup(processedData, 
+            v => ({totalMembers: d3.sum(v, d => d.members), averageScore: d3.mean(v, d => d.score)}), 
+            d => d.genre);
 
-        // Create a size scale for the number of episodes
-        var size = d3.scaleLinear()
-            .domain(d3.extent(animeData, function(d) { return d.episodes; }))
-            .range([4, 20]);
+        // Convert the Map to an array for plotting
+        var plotData = Array.from(dataByGenre, ([key, value]) => ({genre: key, ...value}));
 
-        // Add X axis
-        var x = d3.scaleLinear()
-            .domain(d3.extent(animeData, function(d) { return d.score; }))
-            .range([0, width]);
-        svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
-
-        // Add Y axis
-        var y = d3.scaleLinear()
-            .domain([0, d3.max(animeData, function(d) { return d.members; })])
-            .range([height, 0]);
-        svg.append("g")
-            .call(d3.axisLeft(y));
+        // Create color scale for the genres
+        var color = d3.scaleOrdinal()
+        .domain(plotData.map(d => d.genre))
+        .range(d3.schemeTableau10);
 
         // Add a tooltip div (initially hidden)
         var tooltip = d3.select("#my_dataviz")
@@ -60,26 +53,41 @@ export default function s3() {
             .style("border-radius", "5px")
             .style("padding", "5px");
 
+        // Add X axis
+        var x = d3.scaleLinear()
+            .domain(d3.extent(plotData, d => d.averageScore))
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(plotData, d => d.totalMembers)])
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
         // Show the dots
         svg.append('g')
             .selectAll("dot")
-            .data(animeData)
+            .data(plotData)
             .enter()
             .append("circle")
-            .attr("cx", function(d) { return x(d.score); })
-            .attr("cy", function(d) { return y(d.members); })
-            .attr("r", function(d) { return size(d.episodes); })
-            .style("fill", function(d) { return color(d.aired_from_year); })
-            .style("opacity", 0.5)
+            .attr("cx", d => x(d.averageScore))
+            .attr("cy", d => y(d.totalMembers))
+            .attr("r", 5)
+            .style("fill", d => color(d.genre))
             .on("mouseover", function(event, d) {
                 tooltip.style("opacity", 1)
-                    .html("Title: " + d.title + "<br>Score: " + d.score + "<br>Members: " + d.members)
+                    .html("Genre: " + d.genre + "<br>Avg Score: " + d.averageScore.toFixed(2) + "<br>Members: " + d.totalMembers)
                     .style("left", (d3.pointer(event)[0]+30) + "px")
                     .style("top", (d3.pointer(event)[1]+30) + "px");
             })
             .on("mouseout", function(d) {
                 tooltip.style("opacity", 0);
             });
+
     }).catch(function(error){
             console.log(error);
     });

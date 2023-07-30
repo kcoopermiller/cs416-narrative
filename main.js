@@ -16,7 +16,7 @@ function generateScene() {
     const sceneDescriptions = [
         "Scene 1: This is a visualization of the number of anime shows produced over the years.",
         "Scene 2: This scene breaks down the number of anime shows each year according to genre.",
-        "Scene 3: This scene displays a scatter plot showing the relationship between user ratings and the number of users who watched the shows."
+        "Scene 3: This scene displays a scatter plot showing the relationship between user ratings and the number of users who watched a certain genre."
     ];
     
     // Update the scene description
