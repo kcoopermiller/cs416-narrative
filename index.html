@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Anime Data Visualization</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+            .container {
+                display: flex;
+            }
+            button {
+                margin-left: auto;
+                margin-right: auto;
+                display: flex;
+            }
+            #legend {
+                width: 150px;
+                height: 400px;
+                overflow-y: auto;
+            }
+        </style>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://d3js.org/topojson.v3.min.js"></script>
+    </head>
+    <body>
+        <h1>Anime Data Visualization</h1>
+        <p>This is a visualization of the number of anime shows produced over the years.</p>
+        <div class="container">
+            <div id="my_dataviz"></div>
+            <div id="legend"></div>
+        </div>
+        <script src="scene3.js"></script>
+        <button>Next</button>
+    </body>
+</html>
