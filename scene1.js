@@ -19,7 +19,7 @@ export default function s1() {
         // Pre-process the data: extract year from 'aired.from' and convert to number
         animeData.forEach(function(d) {
             if (d.aired) {
-                d.aired_from_year = new Date(d.aired).getFullYear() + 1;
+                d.aired_from_year = new Date(d.aired).getFullYear();
             }
         });
 
