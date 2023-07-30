@@ -22,15 +22,17 @@
         </style>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://d3js.org/topojson.v3.min.js"></script>
+        <script src="main.js" type="module"></script>
     </head>
     <body>
         <h1>Anime Data Visualization</h1>
-        <p>This is a visualization of the number of anime shows produced over the years.</p>
+        <p id="sceneDescription"></p>
         <div class="container">
             <div id="my_dataviz"></div>
             <div id="legend"></div>
         </div>
-        <script src="scene3.js"></script>
-        <button>Next</button>
+        <button id="prevButton" disabled>Previous</button>
+        <button id="nextButton">Next</button>
+        <script src="main.js"></script>
     </body>
 </html>
