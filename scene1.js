@@ -7,7 +7,7 @@ export default function s1() {
     // Append the svg object to the body of the page
     var svg = d3.select("#my_dataviz")
     .append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right + 250)
         .attr("height", height + margin.top + margin.bottom)
     .append("g")
         .attr("transform",
@@ -72,6 +72,26 @@ export default function s1() {
             .attr("stroke-width", 1.5)
             .attr("d", line);
 
+        // Define the annotations
+        var annotations1 = [{
+            note: {
+                title: "2017 season underway",
+                label: "The number of anime releases in 2017 is lower as the year was not over when the data was gathered."
+            },
+            x: x(2017),
+            y: y(data.find(d => d.year === 2017).count),
+            dy: 10,
+            dx: 50
+        }];
+
+        // Create the annotation function
+        var makeAnnotations1 = d3.annotation()
+            .annotations(annotations1);
+
+        // Add the annotations to the svg
+        svg.append("g")
+            .attr("class", "annotation-group")
+            .call(makeAnnotations1);
     }).catch(function(error){
     console.log(error);
     });
