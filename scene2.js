@@ -105,17 +105,17 @@ export default function s2() {
 
         // Show the bars
         svg.append("g")
-        .selectAll("g")
-        .data(d3.stack().keys(subgroups)(stackedData))
-        .join("g")
-            .attr("fill", function(d) { return color(d.key); })
-        .selectAll("rect")
-        .data(function(d) { return d; })
-        .join("rect")
-            .attr("x", function(d) { return x(d.data.year); })
-            .attr("y", function(d) { return y(d[1]); })
-            .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-            .attr("width",x.bandwidth());
+            .selectAll("g")
+            .data(d3.stack().keys(subgroups)(stackedData))
+            .join("g")
+                .attr("fill", function(d) { return color(d.key); })
+            .selectAll("rect")
+            .data(function(d) { return d; })
+            .join("rect")
+                .attr("x", function(d) { return x(d.data.year); })
+                .attr("y", function(d) { return y(d[1]); })
+                .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+                .attr("width",x.bandwidth());
     }).catch(function(error){
         console.log(error);
     });
